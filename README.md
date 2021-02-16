@@ -50,9 +50,11 @@ If you have any questions or suggestions, feel free to send me an email at nickh
 
 ## Pytoch Version
 Only implemented MNIST and Fashion MNIST.
-
+### Requirement
+pytorch 1.7.0
 ### Run
 python torch_train.py --dataset mnist --default 1
+
 
 
 
