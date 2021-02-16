@@ -7,7 +7,7 @@ import numpy as np
 import librosa
 import argparse
 from keras.models import Sequential
-from kapre.time_frequency import Melspectrogram
+from kapre.time_frequency import Melspectrogram # 这里找不到这个包，还没能解决呢。。。
 from kapre.utils import Normalization2D
 # modified based on https://github.com/douglas125/SpeechCmdRecognition
 

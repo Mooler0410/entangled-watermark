@@ -1,4 +1,6 @@
-import tensorflow as tf
+#import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import functools
 import numpy as np
 
@@ -24,7 +26,7 @@ def pairwise_cos_distance(A):
 
 def snnl(x, y, t, metric='euclidean'):
     x = tf.nn.relu(x)
-    same_label_mask = tf.cast(tf.squeeze(tf.equal(y, tf.expand_dims(y, 1))), tf.float32)
+    same_label_mask = tf.cast(tf.equal(y, tf.expand_dims(y, 1)), tf.float32)
     if metric == 'euclidean':
         dist = pairwise_euclid_distance(tf.reshape(x, [tf.shape(x)[0], -1]))
     elif metric == 'cosine':
@@ -441,7 +443,8 @@ class EWE_LSTM:
         self.Y = label
         self.w = w_label
         self.y = tf.argmax(self.Y, 1)
-        self.cell = tf.contrib.rnn.BasicLSTMCell(256)
+        #self.cell = tf.contrib.rnn.BasicLSTMCell(256)
+        self.cell = tf.nn.rnn_cell.BasicLSTMCell(256)
         self.temp = temperatures
         self.factor_1 = factors[0]
         self.factor_2 = factors[1]
@@ -458,7 +461,8 @@ class EWE_LSTM:
 
     def pred(self):
         res = []
-        x, states = tf.contrib.rnn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
+        #x, states = tf.contrib.rnn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
+        x, states = tf.nn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
         res.append(x[int(len(x) // 2)])
         x = x[-1]
         res.append(x)
@@ -514,14 +518,16 @@ class Plain_LSTM:
         self.x = image
         self.Y = label
         self.y = tf.argmax(self.Y, 1)
-        self.cell = tf.contrib.rnn.BasicLSTMCell(256)
+        #self.cell = tf.contrib.rnn.BasicLSTMCell(256)
+        self.cell = tf.nn.rnn_cell.BasicLSTMCell(256)
         self.fc = functools.partial(tf.layers.dense)
         self.prediction = self.pred()
         self.error = self.error_rate()
         self.optimize = self.optimizer()
 
     def pred(self):
-        x, states = tf.contrib.rnn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
+        #x, states = tf.contrib.rnn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
+        x, states = tf.nn.static_rnn(self.cell, tf.unstack(tf.squeeze(self.x), axis=1), dtype=tf.float32)
         x = x[-1]
         x = self.fc(x, units=128)
         x = tf.nn.relu(x)

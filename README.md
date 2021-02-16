@@ -44,3 +44,15 @@ The `train.py` script also contains a model extraction attack to test the robust
 
 ### Questions or suggestions
 If you have any questions or suggestions, feel free to send me an email at nickhengrui.jia@mail.utoronto.ca
+
+
+
+
+## Pytoch Version
+Only implemented MNIST and Fashion MNIST.
+
+### Run
+python torch_train.py --dataset mnist --default 1
+
+
+

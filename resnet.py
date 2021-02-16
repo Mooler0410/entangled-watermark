@@ -1,7 +1,9 @@
 # from https://github.com/taki0112/ResNet-Tensorflow
 
-import tensorflow as tf
-import tensorflow.contrib as tf_contrib
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+#import tensorflow as tf
+#import tensorflow.contrib as tf_contrib
 
 tf.random.set_random_seed(0)
 
@@ -10,9 +12,11 @@ tf.random.set_random_seed(0)
 # Normal : tf.random_normal_initializer(mean=0.0, stddev=0.02)
 # l2_decay : tf_contrib.layers.l2_regularizer(0.0001)
 
-weight_init = tf_contrib.layers.variance_scaling_initializer()
-weight_regularizer = tf_contrib.layers.l2_regularizer(0.0001)
 
+#weight_init = tf_contrib.layers.variance_scaling_initializer()
+weight_init = tf.variance_scaling_initializer()
+#weight_regularizer = tf_contrib.layers.l2_regularizer(0.0001)
+weight_regularizer = tf.keras.regularizers.L2(0.0001)
 
 ##################################################################################
 # Layer
@@ -146,10 +150,14 @@ def relu(x):
 ##################################################################################
 
 def batch_norm(x, is_training=True, scope='batch_norm'):
-    return tf_contrib.layers.batch_norm(x,
-                                        decay=0.9, epsilon=1e-05,
-                                        center=True, scale=True, updates_collections=None,
-                                        is_training=is_training, scope=scope)
+    #return tf_contrib.layers.batch_norm(x,
+    #                                    decay=0.9, epsilon=1e-05,
+    #                                    center=True, scale=True, updates_collections=None,
+    #                                    is_training=is_training, scope=scope)
+    
+    return tf.compat.v1.layers.batch_normalization(x,
+                                                   epsilon=0.00001, center=True, 
+                                                   scale=True, training=is_training)
 
 ##################################################################################
 # Loss function

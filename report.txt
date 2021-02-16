@@ -1,0 +1,32 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 0 issues that require attention
+--------------------------------------------------------------------------------
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'resnet.py'
+ outputting to 'resnet_update.py'
+--------------------------------------------------------------------------------
+
+8:0: INFO: Renamed 'tf.random.set_random_seed' to 'tf.compat.v1.random.set_random_seed'
+26:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+27:12: INFO: Renamed 'tf.layers.conv2d' to 'tf.compat.v1.layers.conv2d'
+35:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+37:12: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+42:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+63:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+79:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+130:11: INFO: Renamed 'tf.layers.flatten' to 'tf.compat.v1.layers.flatten'
+133:10: INFO: Added keywords to args of function 'tf.reduce_mean'
+137:11: INFO: Renamed 'tf.layers.average_pooling2d' to 'tf.compat.v1.layers.average_pooling2d'
+167:11: INFO: Added keywords to args of function 'tf.reduce_mean'
+167:26: INFO: Renamed 'tf.nn.softmax_cross_entropy_with_logits_v2' to 'tf.nn.softmax_cross_entropy_with_logits'
+168:26: INFO: Added keywords to args of function 'tf.argmax'
+168:48: INFO: Added keywords to args of function 'tf.argmax'
+169:15: INFO: Added keywords to args of function 'tf.reduce_mean'
+--------------------------------------------------------------------------------
+

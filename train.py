@@ -1,4 +1,8 @@
-import tensorflow as tf
+#import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+import tensorflow_addons as tfa
+
 import numpy as np
 import argparse
 import os
@@ -21,8 +25,9 @@ def augment_train(image):
     image = tf.image.random_crop(image, size=[image.shape[0], 32, 32, 3])
     image = tf.image.random_flip_left_right(image)
     random_angles = tf.random.uniform(shape=(image.shape[0],), minval=-np.pi / 8, maxval=np.pi / 8)
-    image = tf.contrib.image.transform(image, tf.contrib.image.angles_to_projective_transforms(
-            random_angles, 32, 32))
+    #image = tf.contrib.image.transform(image, tf.contrib.image.angles_to_projective_transforms(
+    #        random_angles, 32, 32))
+    image = tfa.image.transform(image, tfa.image.angles_to_projective_transforms(random_angles, 32, 32))
     image = tf.image.per_image_standardization(image)
     return image
 
@@ -54,12 +59,14 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
         source_data = x_train[y_train == watermark_source]
     elif distribution == "out":
         if dataset == "mnist":
-            w_dataset = "fashion"
+            w_dataset = "fashion" # 我怀疑这里是个bug
+            # w_dataset = "mnist"
             with open(os.path.join("data", f"{w_dataset}.pkl"), 'rb') as f:
                 w_data = pickle.load(f)
             x_w, y_w = w_data["training_images"], w_data["training_labels"]
         elif dataset == "fashion":
-            w_dataset = "mnist"
+            w_dataset = "mnist" #同样bug
+            #w_dataset = 'fashion'
             with open(os.path.join("data", f"{w_dataset}.pkl"), 'rb') as f:
                 w_data = pickle.load(f)
             x_w, y_w = w_data["training_images"], w_data["training_labels"]
@@ -150,9 +157,9 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
         trigger[:, w_pos[0]:w_pos[0] + 3, w_pos[1]:w_pos[1] + 3, 0] = 1
     else:
         w_pos = [-1, -1]
-
+    
+    '''
     step_list = np.zeros([w_num_batch])
-    snnl_change = []
     for batch in range(w_num_batch):
         current_trigger = trigger[batch * half_batch_size: (batch + 1) * half_batch_size]
         for epoch in range(maxiter):
@@ -177,7 +184,7 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
                              is_augment: 0})[0]
             current_trigger = np.clip(current_trigger - w_lr * np.sign(grad[:half_batch_size]), 0, 1)
         trigger[batch * half_batch_size: (batch + 1) * half_batch_size] = current_trigger
-
+    '''
     for epoch in range(round((w_epochs * num_batch / w_num_batch))):
         if shuffle:
             np.random.shuffle(index)
@@ -191,7 +198,8 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
                     if j >= num_batch:
                         j = 0
                     sess.run(model.optimize, {x: x_train[j * batch_size: (j + 1) * batch_size],
-                                              y: y_train[j * batch_size: (j + 1) * batch_size], w: w_0,
+                                              y: y_train[j * batch_size: (j + 1) * batch_size], 
+                                              w: w_0,
                                               t: temperatures,
                                               is_training: 1, is_augment: 1})
                     j += 1
@@ -200,17 +208,20 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
                 if j >= num_batch:
                     j = 0
                 sess.run(model.optimize, {x: x_train[j * batch_size: (j + 1) * batch_size],
-                                          y: y_train[j * batch_size: (j + 1) * batch_size], w: w_0,
+                                          y: y_train[j * batch_size: (j + 1) * batch_size], 
+                                          w: w_0,
                                           t: temperatures,
                                           is_training: 1, is_augment: 1})
                 j += 1
                 normal += 1
+
             batch_data = np.concatenate([trigger[batch * half_batch_size: (batch + 1) * half_batch_size],
                                          target_data[batch * half_batch_size: (batch + 1) * half_batch_size]], 0)
 
-            _, temp_grad = sess.run(model.optimize, {x: batch_data, y: trigger_label, w: w_label, t: temperatures,
+            (_tloss, temp_grad), _snnl = sess.run([model.optimize, model.snnl_loss], {x: batch_data, y: trigger_label, w: w_label, t: temperatures,
                                                      is_training: 1, is_augment: 0})
-            temperatures -= temp_lr * temp_grad[0]
+
+            #temperatures -= temp_lr * temp_grad[0] # [0] 是因为tf的特殊用法。
 
     victim_error_list = []
     for batch in range(num_test):
@@ -347,7 +358,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', help='learning rate', type=float, default=0.001)
     parser.add_argument('--epochs', help='epochs for training without watermarking', type=int, default=10)
     parser.add_argument('--w_epochs', help='epochs for training with watermarking', type=int, default=10)
-    parser.add_argument('--dataset', help='mnist, fashion, speechcmd, cifar10, or cifar100', type=str, default="cifar10")
+    parser.add_argument('--dataset', help='mnist, fashion, speechcmd, cifar10, or cifar100', type=str, default="mnist")
     parser.add_argument('--model', help='2_conv, lstm, or resnet', type=str, default="2_conv")
     parser.add_argument('--metric', help='distance metric used in snnl, euclidean or cosine', type=str, default="cosine")
     parser.add_argument('--factors', help='weight factor for snnl', nargs='+', type=float, default=[32, 32, 32])
