@@ -42,9 +42,6 @@ python train.py --dataset [mnist/fashion/speechcmd/cifar10/cifar100] --default 1
 There are a number of arguments that could be used to set the hyperparameters. The interpretation and configuration of these hyperparameters are explained in our [paper](https://PLACEHOLDER). Note that by setting the flag `--default 1`, pre-defined hyperparameters will be used.
 The `train.py` script also contains a model extraction attack to test the robustness of the watermarks. It is only for testing purpose and is not necessary for training the model.
 
-### Questions or suggestions
-If you have any questions or suggestions, feel free to send me an email at nickhengrui.jia@mail.utoronto.ca
-
 
 
 
@@ -54,7 +51,11 @@ Only implemented MNIST and Fashion MNIST.
 pytorch 1.7.0
 ### Run
 python torch_train.py --dataset mnist --default 1
+### Exsisting Problems
+When test extracted model with watermarked data, just reach an accuracy 0.04~0.4
 
+While the original codes could reach 0.4~0.9.
 
+(For MNIST)
 
 
