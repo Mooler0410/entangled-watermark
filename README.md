@@ -51,7 +51,7 @@ Only implemented MNIST and Fashion MNIST.
 pytorch 1.7.0
 ### Run
 python torch_train.py --dataset mnist --default 1
-### Exsisting Problems
+### Existing Problems
 When test extracted model with watermarked data, just reach an accuracy 0.04~0.4
 
 While the original codes could reach 0.4~0.9.
