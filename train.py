@@ -159,6 +159,7 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
         w_pos = [-1, -1]
     
     '''
+    # 这部分是原代码中调节trigger的代码。注释掉对结果影响不大。
     step_list = np.zeros([w_num_batch])
     for batch in range(w_num_batch):
         current_trigger = trigger[batch * half_batch_size: (batch + 1) * half_batch_size]

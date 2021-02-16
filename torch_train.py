@@ -181,7 +181,7 @@ def train(x_train, y_train, x_test, y_test, ewe_model, plain_model, epochs, w_ep
     
     #****************************调整trigger*************************************************
     #目的是让trigger在没有采用文中的方法直接extract得到的模型上表现更差。
-    #不影响在使用了EWE方法之后extraction的效果。但是在一般方法下，会没那么好看。(0.1附近VS小于0.01)
+    #在原代码中，去掉这部分，不影响在使用了EWE方法之后extraction的效果。但是在一般方法下，会没那么好看。(0.1附近VS小于0.01)
     
     step_list = np.zeros([w_num_batch])
     model.eval()
